@@ -6,142 +6,43 @@
     <title>HTML File Uploader</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f5f5f5;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 40px rgba(0,0,0,0.10);
-            max-width: 640px;
-            width: 100%;
-            padding: 40px;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .container { background: white; border-radius: 16px; box-shadow: 0 4px 40px rgba(0,0,0,0.10); max-width: 640px; width: 100%; padding: 40px; }
         h1 { font-size: 24px; font-weight: 600; margin-bottom: 6px; color: #111; }
         .subtitle { font-size: 14px; color: #888; margin-bottom: 32px; }
         .section { margin-bottom: 24px; }
         .section label { display: block; font-size: 13px; font-weight: 500; color: #555; margin-bottom: 8px; }
         .upload-row { display: flex; align-items: center; gap: 12px; }
-        .browse-btn {
-            padding: 10px 20px;
-            background: #111;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s;
-            white-space: nowrap;
-        }
+        .browse-btn { padding: 10px 20px; background: #111; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; }
         .browse-btn:hover { background: #333; }
         .file-name { font-size: 13px; color: #888; }
         .file-name.loaded { color: #111; font-weight: 500; }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #111;
-            transition: border-color 0.2s;
-        }
+        input[type="text"] { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; color: #111; }
         input[type="text"]:focus { outline: none; border-color: #111; }
         .hint { font-size: 12px; color: #aaa; margin-top: 5px; }
-        .generate-btn {
-            width: 100%;
-            padding: 12px;
-            background: #5c6ac4;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+        .generate-btn { width: 100%; padding: 12px; background: #5c6ac4; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
         .generate-btn:hover { background: #4a59b5; }
-        .result {
-            display: none;
-            margin-top: 20px;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 10px;
-            padding: 16px;
-        }
+        .generate-btn:disabled { background: #aaa; cursor: not-allowed; }
+        .result { display: none; margin-top: 20px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px; }
         .result.show { display: block; }
         .result-label { font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
         .link-row { display: flex; gap: 8px; }
-        .link-box {
-            flex: 1;
-            padding: 10px 12px;
-            background: white;
-            border: 1px solid #d1fae5;
-            border-radius: 6px;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 12px;
-            color: #059669;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .copy-btn {
-            padding: 10px 16px;
-            background: #16a34a;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background 0.2s;
-        }
+        .link-box { flex: 1; padding: 10px 12px; background: white; border: 1px solid #d1fae5; border-radius: 6px; font-family: monospace; font-size: 12px; color: #059669; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .copy-btn { padding: 10px 16px; background: #16a34a; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
         .copy-btn:hover { background: #15803d; }
-        .error {
-            display: none;
-            margin-top: 12px;
-            padding: 10px 14px;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 8px;
-            font-size: 13px;
-            color: #dc2626;
-        }
+        .error { display: none; margin-top: 12px; padding: 10px 14px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; font-size: 13px; color: #dc2626; }
         .error.show { display: block; }
         .divider { border: none; border-top: 1px solid #f0f0f0; margin: 28px 0; }
         .history-title { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 12px; }
         .history-list { display: flex; flex-direction: column; gap: 8px; }
-        .hist-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            background: #fafafa;
-            border: 1px solid #eee;
-            border-radius: 8px;
-        }
-        .hist-icon { font-size: 16px; }
+        .hist-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #fafafa; border: 1px solid #eee; border-radius: 8px; }
         .hist-name { flex: 1; font-size: 13px; font-weight: 500; color: #111; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .hist-slug { font-size: 11px; color: #aaa; font-family: monospace; white-space: nowrap; }
-        .hist-copy {
-            padding: 5px 10px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            color: #555;
-            transition: all 0.2s;
-        }
+        .hist-copy { padding: 5px 10px; background: white; border: 1px solid #ddd; border-radius: 6px; font-size: 12px; cursor: pointer; color: #555; }
         .hist-copy:hover { border-color: #5c6ac4; color: #5c6ac4; }
         .empty { font-size: 13px; color: #ccc; text-align: center; padding: 16px 0; }
+        .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -161,11 +62,10 @@
     <div class="section">
         <label>Custom link name <span style="font-weight:400;color:#bbb">(optional)</span></label>
         <input type="text" id="customName" placeholder="e.g. my-landing-page" oninput="sanitizeName(this)">
-        <div class="hint">Letters, numbers, and hyphens only. Auto-filled from filename.</div>
+        <div class="hint">Letters, numbers, hyphens only. Auto-filled from filename.</div>
     </div>
 
-    <button class="generate-btn" onclick="generateLink()">Generate link</button>
-
+    <button class="generate-btn" id="generateBtn" onclick="generateLink()">Generate link</button>
     <div class="error" id="error"></div>
 
     <div class="result" id="result">
@@ -177,16 +77,30 @@
     </div>
 
     <hr class="divider">
-
     <div class="history-title">Recent links</div>
-    <div class="history-list" id="historyList">
-        <div class="empty">No links yet</div>
-    </div>
+    <div class="history-list" id="historyList"><div class="empty">No links yet</div></div>
 </div>
 
 <script>
+    const SUPABASE_URL = 'https://eldrtndtngqcooxszodd.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsZHJ0bmR0bmdxY29veHN6b2RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MDQ5MjksImV4cCI6MjA5MDM4MDkyOX0.VeJPPNwVQobtuxN4l81Jhww4Uphx14d5A87UOMgzvU4';
+
     let fileContent = '';
     let fileName = '';
+
+    async function supabase(method, path, body) {
+        const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+            method,
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_KEY,
+                'Content-Type': 'application/json',
+                'Prefer': method === 'POST' ? 'return=representation' : ''
+            },
+            body: body ? JSON.stringify(body) : undefined
+        });
+        return res.json();
+    }
 
     function onFileSelect(input) {
         const file = input.files[0];
@@ -212,29 +126,55 @@
         const el = document.getElementById('error');
         el.textContent = msg;
         el.classList.add('show');
-        setTimeout(() => el.classList.remove('show'), 3500);
+        setTimeout(() => el.classList.remove('show'), 4000);
     }
 
-    function generateLink() {
+    function setLoading(on) {
+        const btn = document.getElementById('generateBtn');
+        btn.disabled = on;
+        btn.innerHTML = on ? '<span class="spinner"></span>Uploading...' : 'Generate link';
+    }
+
+    async function generateLink() {
         if (!fileContent) { showError('Please select an HTML file first.'); return; }
+        setLoading(true);
+
         const nameInput = document.getElementById('customName').value.trim();
-        const slug = nameInput || Math.random().toString(36).substring(2, 10);
-        const link = window.location.origin + '/view/' + slug;
+        // Always generate a unique slug — append random suffix to avoid collisions
+        const base = nameInput || fileName.replace(/\.html?$/i, '').replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+        const slug = base + '-' + Math.random().toString(36).substring(2, 7);
 
-        localStorage.setItem('html_' + slug, JSON.stringify({
-            html: fileContent,
+        const data = await supabase('POST', 'html_pages', {
+            slug,
             name: fileName,
-            created: Date.now()
-        }));
+            html: fileContent
+        });
 
+        setLoading(false);
+
+        if (data.error || (Array.isArray(data) && data[0]?.code)) {
+            showError('Upload failed: ' + (data.message || data[0]?.message || 'Unknown error'));
+            return;
+        }
+
+        const link = window.location.origin + '/view/' + slug;
         document.getElementById('linkVal').textContent = link;
         document.getElementById('result').classList.add('show');
         document.getElementById('error').classList.remove('show');
 
+        // Save to local history for display
         const hist = JSON.parse(localStorage.getItem('upload_history') || '[]');
         hist.unshift({ slug, name: fileName, link });
         localStorage.setItem('upload_history', JSON.stringify(hist.slice(0, 10)));
         renderHistory();
+
+        // Reset for next upload
+        document.getElementById('customName').value = '';
+        document.getElementById('fileInput').value = '';
+        document.getElementById('fileName').textContent = 'No file selected';
+        document.getElementById('fileName').classList.remove('loaded');
+        fileContent = '';
+        fileName = '';
     }
 
     function copyLink() {
@@ -252,8 +192,7 @@
         if (!hist.length) { el.innerHTML = '<div class="empty">No links yet</div>'; return; }
         el.innerHTML = hist.map(h => `
             <div class="hist-item">
-                <span class="hist-icon">📄</span>
-                <span class="hist-name">${h.name}</span>
+                <span class="hist-name">📄 ${h.name}</span>
                 <span class="hist-slug">/view/${h.slug}</span>
                 <button class="hist-copy" onclick="navigator.clipboard.writeText('${h.link}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',2000)})">Copy</button>
             </div>
@@ -262,16 +201,23 @@
 
     renderHistory();
 
+    // Handle /view/:slug — fetch from Supabase and render
     const match = window.location.pathname.match(/\/view\/([^/]+)/);
     if (match) {
-        const data = JSON.parse(localStorage.getItem('html_' + match[1]) || 'null');
-        if (data) {
-            document.open();
-            document.write(data.html);
-            document.close();
-        } else {
-            document.body.innerHTML = '<div style="font-family:sans-serif;padding:60px;text-align:center"><h2>Page not found</h2><p style="color:#888;margin-top:8px">This link may have expired or doesn\'t exist.</p><a href="/" style="color:#5c6ac4">Go back</a></div>';
-        }
+        const slug = match[1];
+        fetch(SUPABASE_URL + '/rest/v1/html_pages?slug=eq.' + slug + '&select=html', {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data && data[0] && data[0].html) {
+                document.open();
+                document.write(data[0].html);
+                document.close();
+            } else {
+                document.body.innerHTML = '<div style="font-family:sans-serif;padding:60px;text-align:center"><h2>Page not found</h2><p style="color:#888;margin-top:8px">This link does not exist.</p><a href="/" style="color:#5c6ac4">Go back</a></div>';
+            }
+        });
     }
 </script>
 </body>
